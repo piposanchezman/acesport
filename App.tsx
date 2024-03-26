@@ -1,6 +1,8 @@
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
 import {Button, Text, View, StyleSheet} from 'react-native';
 import {useAuth0, Auth0Provider} from 'react-native-auth0';
+import {Onboarding} from './views/Onboarding';
 
 const Home = () => {
   const {authorize, clearSession, user, error, isLoading} = useAuth0();
@@ -34,14 +36,21 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      {loggedIn && <Text>You are logged in as {user.name}</Text>}
-      {!loggedIn && <Text>You are not logged in</Text>}
-      {error && <Text>{error.message}</Text>}
+      <NavigationContainer>
+        {loggedIn && (
+          <Text style={{color: '#000'}}>You are logged in as {user.name}</Text>
+        )}
+        {!loggedIn && (
+          <>
+            <Onboarding />
+            <Text style={{color: '#000'}}>You are not logged in</Text>
+            <Button onPress={onLogin} title="Log In" />
+          </>
+        )}
+        {error && <Text>{error.message}</Text>}
 
-      <Button
-        onPress={loggedIn ? onLogout : onLogin}
-        title={loggedIn ? 'Log Out' : 'Log In'}
-      />
+        {loggedIn && <Button onPress={onLogout} title="Log Out" />}
+      </NavigationContainer>
     </View>
   );
 };
