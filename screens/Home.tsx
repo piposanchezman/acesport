@@ -12,7 +12,7 @@ const Home = ({navigation}: {navigation: any}) => {
   const {user} = useAuth0();
 
   const handleCreateTournament = () => {
-    navigation.navigate('CreateTournament');
+    navigation.navigate('Nuevo Torneo');
   };
 
   return (
