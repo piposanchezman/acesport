@@ -6,12 +6,15 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
+import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {Text, View, StyleSheet, ActivityIndicator} from 'react-native';
 import {useAuth0, Auth0Provider} from 'react-native-auth0';
 import Slider from './screens/Slider';
 import Home from './screens/Home';
+import Profile from './screens/Profile';
 import MyChallenges from './screens/MyChallenges';
+import NewChallenge from './screens/NewChallenge';
 
 const Navigation = () => {
   const {clearSession, user, error, isLoading} = useAuth0();
@@ -35,6 +38,7 @@ const Navigation = () => {
 
   const loggedIn = user !== undefined && user !== null;
   const Drawer = createDrawerNavigator();
+  const Stack = createStackNavigator();
 
   const CustomDrawerContent = (props: any) => {
     return (
@@ -45,16 +49,30 @@ const Navigation = () => {
     );
   };
 
+  const DrawerNavigator = () => {
+    return (
+      <Drawer.Navigator
+        initialRouteName="Home"
+        drawerContent={props => <CustomDrawerContent {...props} />}>
+        <Drawer.Screen name="Inicio" component={Home} />
+        <Drawer.Screen name="Mis Torneos" component={MyChallenges} />
+        <Drawer.Screen name="Perfil" component={Profile} />
+      </Drawer.Navigator>
+    );
+  };
+
   return (
     <View style={{height: '100%', backgroundColor: 'white'}}>
       {loggedIn && (
         <NavigationContainer>
-          <Drawer.Navigator
-            initialRouteName="Home"
-            drawerContent={props => <CustomDrawerContent {...props} />}>
-            <Drawer.Screen name="Inicio" component={Home} />
-            <Drawer.Screen name="Mis Torneos" component={MyChallenges} />
-          </Drawer.Navigator>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Home"
+              component={DrawerNavigator}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen name="Nuevo Torneo" component={NewChallenge} />
+          </Stack.Navigator>
         </NavigationContainer>
       )}
       {!loggedIn && (
