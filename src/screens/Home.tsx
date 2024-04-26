@@ -1,84 +1,100 @@
-import React from "react";
-import { View, Text, ImageBackground, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Text, Image, TouchableOpacity } from "react-native";
+import MainLayout from "layouts/MainLayout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ navigation }: { navigation: any }) => {
+  const [userData, setUserData] = useState<{ name: string } | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const dataToken = await AsyncStorage.getItem("accessToken");
+      const url = "http://192.168.0.26:6500/api/users/profile/";
+      const response = await axios.get(url, { headers: { Authorization: `Bearer ${dataToken}` } });
+      const result = response.data;
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const handleCreateTournament = () => {
     navigation.navigate("Nuevo Torneo");
   };
 
+  useEffect(() => {
+    fetchData().then((result) => {
+      setUserData(result);
+    });
+  }, []);
+
   return (
-    <ImageBackground source={require("../assets/Background.png")} imageStyle={{ opacity: 0.5 }}>
-      <View
+    <MainLayout>
+      <Image
+        source={require("../assets/AcesportIcon.png")}
         style={{
-          alignItems: "center",
-          backgroundColor: "#141414",
-          opacity: 0.75,
-          height: "100%",
-          justifyContent: "center",
+          width: 200,
+          height: 200,
+        }}
+      />
+      <Text
+        style={{
+          fontSize: 48,
+          fontWeight: "bold",
+          marginTop: 32,
+          color: "#0062FF",
         }}
       >
-        <Image
-          source={require("../assets/Logo.png")}
-          style={{
-            width: 200,
-            height: 200,
-          }}
-        />
+        Acesports
+      </Text>
+      <Text
+        style={{
+          fontSize: 24,
+          textAlign: "center",
+          marginTop: 8,
+          color: "#ffffff",
+        }}
+      >
+        Acesports es una aplicación para la gestión de torneos de videojuegos.
+      </Text>
+      <Text
+        style={{
+          fontSize: 20,
+          textAlign: "center",
+          marginTop: 24,
+          color: "#f6ddb3",
+        }}
+      >
+        Bienvenido,{" "}
+        {userData ? (
+          <Text style={{ color: "#f3c884" }}>{userData.name}</Text>
+        ) : (
+          <Text style={{ color: "#f3c884" }}>Loading...</Text>
+        )}
+      </Text>
+      <TouchableOpacity onPress={handleCreateTournament}>
         <Text
           style={{
-            fontSize: 48,
-            fontWeight: "bold",
-            marginTop: 32,
-            color: "#0062FF",
-          }}
-        >
-          Acesports
-        </Text>
-        <Text
-          style={{
-            fontSize: 24,
-            textAlign: "center",
-            marginTop: 8,
+            fontSize: 16,
+            marginTop: 6,
             color: "#ffffff",
           }}
         >
-          Acesports es una aplicación para la gestión de torneos de videojuegos.
-        </Text>
-        <Text
-          style={{
-            fontSize: 20,
-            textAlign: "center",
-            marginTop: 24,
-            color: "#f6ddb3",
-          }}
-        >
-          Bienvenido,{" "}
+          ¿Quieres crear un torneo? Haz click{" "}
           <Text
             style={{
-              color: "#f3c884",
-            }}
-          ></Text>
-        </Text>
-        <TouchableOpacity onPress={handleCreateTournament}>
-          <Text
-            style={{
-              fontSize: 16,
-              marginTop: 6,
+              textDecorationLine: "underline",
+              color: "#635dff",
             }}
           >
-            ¿Quieres crear un torneo? Haz click{" "}
-            <Text
-              style={{
-                textDecorationLine: "underline",
-                color: "#635dff",
-              }}
-            >
-              aquí
-            </Text>
+            aquí
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+        </Text>
+      </TouchableOpacity>
+    </MainLayout>
   );
 };
 

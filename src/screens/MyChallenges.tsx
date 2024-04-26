@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from "react-native";
+import MainLayout from "layouts/MainLayout";
 
 const MyChallenges = ({ navigation }: { navigation: any }) => {
   const handleCreateTournament = () => {
@@ -7,27 +8,13 @@ const MyChallenges = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/Background.png")}
-      style={{ flex: 1, justifyContent: "center" }}
-      imageStyle={{ opacity: 0.5 }}
-    >
-      <View
-        style={{
-          alignItems: "center",
-          backgroundColor: "#141414",
-          opacity: 0.75,
-          height: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={{ fontSize: 32, color: "#f6ddb3", paddingTop: 80 }}>NO HAY CHALLENGES</Text>
-        <Text style={{ fontSize: 24, color: "#f6ddb3" }}>Añade el primero</Text>
-      </View>
+    <MainLayout>
+      <Text style={{ fontSize: 32, color: "#f6ddb3", paddingTop: 80 }}>NO HAY CHALLENGES</Text>
+      <Text style={{ fontSize: 24, color: "#f6ddb3" }}>Añade el primero</Text>
       <TouchableOpacity style={styles.addButton} onPress={handleCreateTournament}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
-    </ImageBackground>
+    </MainLayout>
   );
 };
 

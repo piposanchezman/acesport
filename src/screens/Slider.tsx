@@ -41,7 +41,7 @@ const Slider = ({ navigation }: { navigation: any }) => {
         setIndex(viewableItems[0]?.index ?? 0);
         const lastVisibleItemIndex = viewableItems[viewableItems.length - 1].index;
         if (lastVisibleItemIndex === Slides.length - 1) {
-          navigation.navigate("Home");
+          navigation.navigate("Login");
         }
       }
     }
