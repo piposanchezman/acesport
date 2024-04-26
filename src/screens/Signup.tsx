@@ -28,6 +28,8 @@ const Signup = ({ navigation }: { navigation: any }) => {
   const [messageType, setMessageType] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
   const handleSignup = (
     credentials: any,
     setSubmitting: any,
@@ -36,7 +38,7 @@ const Signup = ({ navigation }: { navigation: any }) => {
     setMessageType: any
   ) => {
     setMessage("");
-    const url = "http://192.168.0.26:6500/api/users/register/";
+    const url = `${apiUrl}/users/register/`;
     axios
       .post(url, credentials)
       .then((response) => {

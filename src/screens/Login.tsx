@@ -29,6 +29,8 @@ const Login = ({ navigation }: { navigation: any }) => {
   const [messageType, setMessageType] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
   const handleLogin = (
     credentials: any,
     setSubmitting: any,
@@ -37,7 +39,7 @@ const Login = ({ navigation }: { navigation: any }) => {
     setMessageType: any
   ) => {
     setMessage("");
-    const url = "http://192.168.0.26:6500/api/users/authenticate/";
+    const url = `${apiUrl}/users/authenticate/`;
     axios
       .post(url, credentials)
       .then((response) => {
