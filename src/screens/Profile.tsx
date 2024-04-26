@@ -1,29 +1,16 @@
 import React from "react";
 import { Text, View, Image, StyleSheet, ImageBackground } from "react-native";
+import MainLayout from "layouts/MainLayout";
 
 const Profile = () => {
   return (
-    <ImageBackground
-      source={require("../assets/Background.png")}
-      style={{ flex: 1, justifyContent: "center" }}
-      imageStyle={{ opacity: 0.5 }}
-    >
-      <View
-        style={{
-          alignItems: "center",
-          backgroundColor: "#141414",
-          opacity: 0.75,
-          height: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <View style={styles.container}>
-          <Image source={{}} style={styles.profileImage} />
-          <Text style={styles.text}>Name: {}</Text>
-          <Text style={styles.text}>Email: {}</Text>
-        </View>
+    <MainLayout>
+      <View style={styles.container}>
+        <Image source={{}} style={styles.profileImage} />
+        <Text style={styles.text}>Name: {}</Text>
+        <Text style={styles.text}>Email: {}</Text>
       </View>
-    </ImageBackground>
+    </MainLayout>
   );
 };
 

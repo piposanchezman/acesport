@@ -1,74 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GameImages } from "data/GamesImages";
 import { View, Text, ScrollView, Image, StyleSheet, ImageBackground } from "react-native";
 import { Searchbar } from "react-native-paper";
-import Carousel from "react-native-snap-carousel";
+import CustomCarousel from "carousel-with-pagination-rn";
+import MainLayout from "../layouts/MainLayout";
 
-const gamesData = {
-  Moba: [
-    { name: "League of Legends", image: require("../assets/LoLIcon.png") },
-    { name: "Dota2", image: require("../assets/DotaIcon.png") },
-    { name: "Smite", image: require("../assets/SmiteIcon.png") },
-  ],
-  Shooters: [
-    { name: "Valorant", image: require("../assets/ValorantIcon.png") },
-    { name: "CS:GO", image: require("../assets/CSGOIcon.png") },
-    { name: "Overwatch", image: require("../assets/LoLIcon.png") },
-  ],
-  BattleRoyale: [
-    { name: "Fortnite", image: require("../assets/LoLIcon.png") },
-    { name: "PUBG", image: require("../assets/LoLIcon.png") },
-    { name: "Warzone", image: require("../assets/LoLIcon.png") },
-  ],
-};
+interface Category {
+  id: number;
+  name: string;
+}
 
-const GameCategory = ({
-  category,
-  games,
-}: {
-  category: string;
-  games: Array<{ name: string; image: any }>;
-}) => (
-  <View style={{ marginTop: 30 }}>
-    <Text
-      style={{
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
-        marginLeft: 20,
-      }}
-    >
-      {category}
-    </Text>
-    <Carousel
-      data={games}
-      renderItem={({ item }: { item: { name: string; image: any } }) => (
-        <View style={styles.gameContainer}>
-          <Image source={item.image} style={styles.gameImage} />
-          <Text style={{ fontSize: 16 }}>{item.name}</Text>
-        </View>
-      )}
-      sliderWidth={400}
-      itemWidth={150}
-      style={{ marginRight: 20 }}
-    />
-  </View>
-);
+interface Game {
+  id: number;
+  name: string;
+  image: string;
+  category_id: number;
+}
 
-const SelectGameView = () => (
-  <ImageBackground
-    source={require("../assets/Background.png")}
-    imageStyle={{ opacity: 0.5 }}
-    style={{ height: "100%" }}
-  >
-    <View
-      style={{
-        alignItems: "center",
-        backgroundColor: "#141414",
-        opacity: 0.75,
-        height: "100%",
-        justifyContent: "center",
-      }}
-    >
+const SelectGameView = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
+
+  const fetchData = async (url: string) => {
+    try {
+      const dataToken = await AsyncStorage.getItem("accessToken");
+      const response = await axios.get(url, { headers: { Authorization: `Bearer ${dataToken}` } });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchData("http://192.168.0.26:6500/api/categories/all/").then((result) => {
+      setCategories(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchData("http://192.168.0.26:6500/api/games/all/").then((result) => {
+      setGames(result);
+    });
+  }, []);
+
+  const categorizedGames = categories.map((category) => ({
+    category: category,
+    games: games.filter((game) => game.category_id === category.id),
+  }));
+
+  return (
+    <MainLayout>
       <ScrollView>
         <Text
           style={{
@@ -76,6 +60,7 @@ const SelectGameView = () => (
             fontWeight: "bold",
             marginVertical: 20,
             alignSelf: "center",
+            color: "#ffffff",
           }}
         >
           Selecciona tu juego
@@ -85,20 +70,50 @@ const SelectGameView = () => (
           value=""
           style={{ marginLeft: 20, marginRight: 20 }}
         />
-        {Object.entries(gamesData).map(([category, games]) => (
-          <GameCategory key={category} category={category} games={games} />
+        {categorizedGames.map(({ category, games }) => (
+          <GameCategory key={category.id} category={category.name} games={games} />
         ))}
       </ScrollView>
-    </View>
-  </ImageBackground>
+    </MainLayout>
+  );
+};
+
+const GameCategory = ({ category, games }: { category: string; games: Game[] }) => (
+  <View style={{ marginTop: 30 }}>
+    <Text
+      style={{
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+        marginLeft: 20,
+        color: "#ffffff",
+      }}
+    >
+      {category}
+    </Text>
+    <CustomCarousel
+      data={games}
+      disablePagination={true}
+      renderItem={({ item }) => {
+        return (
+          <View style={styles.gameContainer}>
+            <Image source={GameImages[item.name]} style={styles.gameImage} />
+            <Text style={{ fontSize: 16, color: "#ffffff" }}>{item.name}</Text>
+          </View>
+        );
+      }}
+    />
+  </View>
 );
 
 const styles = StyleSheet.create({
   gameContainer: {
     alignItems: "center",
-    overflow: "hidden",
+    height: 150,
+    width: 150,
   },
   gameImage: {
+    flex: 0.8,
     width: 100,
     height: 100,
     borderRadius: 50,
