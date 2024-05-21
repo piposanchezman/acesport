@@ -1,35 +1,14 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { Text, Image, TouchableOpacity } from "react-native";
+import { useAuth0 } from "react-native-auth0";
 import MainLayout from "layouts/MainLayout";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ navigation }: { navigation: any }) => {
-  const [userData, setUserData] = useState<{ name: string } | null>(null);
-
-  const fetchData = async () => {
-    try {
-      const dataToken = await AsyncStorage.getItem("accessToken");
-      const url = "http://192.168.0.26:6500/api/users/profile/";
-      const response = await axios.get(url, { headers: { Authorization: `Bearer ${dataToken}` } });
-      const result = response.data;
-      console.log(result);
-      return result;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
+  const { user } = useAuth0();
 
   const handleCreateTournament = () => {
-    navigation.navigate("Nuevo Torneo");
+    navigation.navigate("NewChallenge");
   };
-
-  useEffect(() => {
-    fetchData().then((result) => {
-      setUserData(result);
-    });
-  }, []);
 
   return (
     <MainLayout>
@@ -69,8 +48,8 @@ const Home = ({ navigation }: { navigation: any }) => {
         }}
       >
         Bienvenido,{" "}
-        {userData ? (
-          <Text style={{ color: "#f3c884" }}>{userData.name}</Text>
+        {user ? (
+          <Text style={{ color: "#f3c884" }}>{user.name}</Text>
         ) : (
           <Text style={{ color: "#f3c884" }}>Loading...</Text>
         )}

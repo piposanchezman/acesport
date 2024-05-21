@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import MainLayout from "layouts/MainLayout";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, ActivityIndicator } from "react-native";
 import { Formik } from "formik";
 import { Colors, AppLogo, Title } from "styles/GlobalStyles";
@@ -21,17 +19,21 @@ import {
   TextLinkContent,
 } from "styles/FormStyles";
 import { Octicons } from "@expo/vector-icons";
+import { AuthContext } from "context/ApiContext";
+import { useAuth0 } from "react-native-auth0";
 
 const { primary, light, brand } = Colors;
 
 const Login = ({ navigation }: { navigation: any }) => {
+  const { user } = useAuth0();
+  const { login } = React.useContext(AuthContext);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  const handleLogin = (
+  const handleLogin = async (
     credentials: any,
     setSubmitting: any,
     resetForm: any,
@@ -39,37 +41,13 @@ const Login = ({ navigation }: { navigation: any }) => {
     setMessageType: any
   ) => {
     setMessage("");
-    const url = `${apiUrl}/users/authenticate/`;
-    axios
-      .post(url, credentials)
-      .then((response) => {
-        const result = response.data;
-        const accessToken = result.accessToken;
-        AsyncStorage.setItem("accessToken", accessToken);
-        console.log(accessToken);
-        if (result !== null) {
-          setMessageType("SUCCESS");
-          setMessage("Inicio de sesión correcto.");
-          resetForm();
-          setTimeout(() => {
-            navigation.navigate("Home");
-          }, 700);
-        } else {
-          setMessageType("ERROR");
-          setMessage(result.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setSubmitting(false);
-        setMessage("Error de conexión. Inténtalo de nuevo.");
-      })
-      .finally(() => {
-        setSubmitting(false);
-        setTimeout(() => {
-          setMessage("");
-        }, 5000);
-      });
+    setSubmitting(true);
+    const result: any = await login(credentials);
+    console.log(result);
+    if (result.status === 404) {
+      setMessageType("ERROR");
+      setMessage("No se ha podido iniciar sesión.");
+    }
   };
 
   return (

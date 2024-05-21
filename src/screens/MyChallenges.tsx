@@ -4,7 +4,7 @@ import MainLayout from "layouts/MainLayout";
 
 const MyChallenges = ({ navigation }: { navigation: any }) => {
   const handleCreateTournament = () => {
-    navigation.navigate("Nuevo Torneo");
+    navigation.navigate("NewChallenge");
   };
 
   return (

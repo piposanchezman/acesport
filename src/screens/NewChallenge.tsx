@@ -67,11 +67,6 @@ const SelectGameView = () => {
         >
           Selecciona tu juego
         </Text>
-        <Searchbar
-          placeholder="Buscar juego..."
-          value=""
-          style={{ marginLeft: 20, marginRight: 20 }}
-        />
         {categorizedGames.map(({ category, games }) => (
           <GameCategory key={category.id} category={category.name} games={games} />
         ))}
