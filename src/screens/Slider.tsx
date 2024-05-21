@@ -2,7 +2,6 @@ import {
   Animated,
   FlatList,
   StyleSheet,
-  Text,
   View,
   ViewToken,
   NativeSyntheticEvent,
@@ -12,8 +11,10 @@ import React, { useRef, useState } from "react";
 import Slides from "../data/Slides";
 import SlideItem from "../components/SlideItems";
 import Pagination from "../components/Pagination";
+import { useAuth0 } from "react-native-auth0";
 
-const Slider = ({ navigation }: { navigation: any }) => {
+const Slider = () => {
+  const { authorize } = useAuth0();
   const [index, setIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList | null>(null);
@@ -41,7 +42,7 @@ const Slider = ({ navigation }: { navigation: any }) => {
         setIndex(viewableItems[0]?.index ?? 0);
         const lastVisibleItemIndex = viewableItems[viewableItems.length - 1].index;
         if (lastVisibleItemIndex === Slides.length - 1) {
-          navigation.navigate("Login");
+          authorize();
         }
       }
     }

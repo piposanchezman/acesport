@@ -23,6 +23,8 @@ const SelectGameView = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [games, setGames] = useState<Game[]>([]);
 
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
   const fetchData = async (url: string) => {
     try {
       const dataToken = await AsyncStorage.getItem("accessToken");
@@ -35,13 +37,13 @@ const SelectGameView = () => {
   };
 
   useEffect(() => {
-    fetchData("http://192.168.0.26:6500/api/categories/all/").then((result) => {
+    fetchData(`${apiUrl}/categories/all/`).then((result) => {
       setCategories(result);
     });
   }, []);
 
   useEffect(() => {
-    fetchData("http://192.168.0.26:6500/api/games/all/").then((result) => {
+    fetchData(`${apiUrl}/games/all/`).then((result) => {
       setGames(result);
     });
   }, []);
@@ -65,11 +67,6 @@ const SelectGameView = () => {
         >
           Selecciona tu juego
         </Text>
-        <Searchbar
-          placeholder="Buscar juego..."
-          value=""
-          style={{ marginLeft: 20, marginRight: 20 }}
-        />
         {categorizedGames.map(({ category, games }) => (
           <GameCategory key={category.id} category={category.name} games={games} />
         ))}
