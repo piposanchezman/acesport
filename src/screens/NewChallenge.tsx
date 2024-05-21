@@ -1,56 +1,46 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState, useEffect, useContext } from "react";
 import { GameImages } from "data/GamesImages";
 import { View, Text, ScrollView, Image, StyleSheet, ImageBackground } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { Category } from "interfaces/category";
+import { Game } from "interfaces/game";
 import CustomCarousel from "carousel-with-pagination-rn";
 import MainLayout from "../layouts/MainLayout";
-
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Game {
-  id: number;
-  name: string;
-  image: string;
-  category_id: number;
-}
+import { getCategories } from "services/category_s";
+import { getGames } from "services/game_s";
+import { ApiContext } from "context/ApiContext";
 
 const SelectGameView = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [games, setGames] = useState<Game[]>([]);
+  const { backendApiCall } = useContext(ApiContext);
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
-  const fetchData = async (url: string) => {
-    try {
-      const dataToken = await AsyncStorage.getItem("accessToken");
-      const response = await axios.get(url, { headers: { Authorization: `Bearer ${dataToken}` } });
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return null;
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const categoriesResponse = await getCategories(backendApiCall);
+        setCategories(categoriesResponse.data);
+      } catch (error) {
+        console.log("Error fetching categories", error);
+      }
     }
-  };
+    loadCategories();
+  }, [backendApiCall]);
 
   useEffect(() => {
-    fetchData(`${apiUrl}/categories/all/`).then((result) => {
-      setCategories(result);
-    });
-  }, []);
-
-  useEffect(() => {
-    fetchData(`${apiUrl}/games/all/`).then((result) => {
-      setGames(result);
-    });
-  }, []);
+    async function loadGames() {
+      try {
+        const gamesResponse = await getGames(backendApiCall);
+        setGames(gamesResponse.data);
+      } catch (error) {
+        console.log("Error fetching games", error);
+      }
+    }
+    loadGames();
+  }, [backendApiCall]);
 
   const categorizedGames = categories.map((category) => ({
     category: category,
-    games: games.filter((game) => game.category_id === category.id),
+    games: games.filter((game) => game.category_id === category._id),
   }));
 
   return (
@@ -68,7 +58,7 @@ const SelectGameView = () => {
           Selecciona tu juego
         </Text>
         {categorizedGames.map(({ category, games }) => (
-          <GameCategory key={category.id} category={category.name} games={games} />
+          <GameCategory key={category._id} category={category.name} games={games} />
         ))}
       </ScrollView>
     </MainLayout>
