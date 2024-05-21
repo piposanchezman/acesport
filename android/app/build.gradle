@@ -85,8 +85,8 @@ android {
 
     namespace 'com.acesports'
     defaultConfig {
-// @generated begin react-native-auth0-manifest-placeholder - expo prebuild (DO NOT MODIFY) sync-83bd4e5b7356e295da62364dfa73ae9c0a92db46
-manifestPlaceholders = [auth0Domain: "dev-3salztzbb4ux5rf3.us.auth0.com", auth0Scheme: "com.acesports.auth0"]
+// @generated begin react-native-auth0-manifest-placeholder - expo prebuild (DO NOT MODIFY) sync-b89f437b415a417fd2ce316b4e825896807a6b9f
+manifestPlaceholders = [auth0Domain: "dev-kllowhtqsd8qirzp.us.auth0.com", auth0Scheme: "com.acesports.auth0"]
 // @generated end react-native-auth0-manifest-placeholder
         applicationId 'com.acesports'
         minSdkVersion rootProject.ext.minSdkVersion
