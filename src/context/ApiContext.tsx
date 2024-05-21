@@ -32,7 +32,7 @@ export const ApiContextProvider: React.FC<PropsWithChildren> = (props) => {
       return { data: null, status: "error", message: "Token not ready yet" };
     }
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL as string}${apiData.endpoint}`, {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL as string}${apiData.endpoint}`, {
         method: apiData.method,
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -50,22 +50,24 @@ export const ApiContextProvider: React.FC<PropsWithChildren> = (props) => {
       return { data: null, status: "error", message: error.message };
     }
   };
-
   const getToken = async () => {
-    const token = await getCredentials();
-    return token?.accessToken as string;
+    try {
+      const token = await getCredentials();
+      return token?.accessToken;
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     getToken()
       .then((token) => {
-        setUserToken(token);
+        setUserToken(token as string);
         setServiceIsReady(true);
       })
       .catch((e) => {
         console.error(e);
       });
   }, []);
-
   return (
     <ApiContext.Provider value={{ userToken: userToken, backendApiCall, serviceIsReady }}>
       {props.children}
