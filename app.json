@@ -1,4 +1,37 @@
 {
-  "name": "acesport",
-  "displayName": "acesport"
+  "expo": {
+    "name": "acesportsFrontend",
+    "slug": "acesportsFrontend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.acesports"
+    },
+    "web": {
+      "favicon": "./src/assets/icon.png"
+    },
+    "plugins": [
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-3salztzbb4ux5rf3.us.auth0.com"
+        }
+      ]
+    ]
+  }
 }
